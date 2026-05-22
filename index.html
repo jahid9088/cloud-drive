@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Fun SK Code Store</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-0:#04060f; --bg-1:#070a1c; --bg-2:#0c1230;
+    --glass:rgba(15,22,55,0.55); --glass-2:rgba(10,15,40,0.75);
+    --stroke:rgba(120,200,255,0.18); --stroke-2:rgba(120,200,255,0.32);
+    --cyan:#00e5ff; --cyan-soft:#7df9ff; --blue:#3b7bff;
+    --pink:#ff4fd8; --green:#36ffb0; --yellow:#ffd84a; --red:#ff5577;
+    --text:#e7f1ff; --muted:#90a2c8;
+    --shadow:0 10px 40px rgba(0,229,255,0.08), 0 2px 8px rgba(0,0,0,0.4);
+    --shadow-strong:0 20px 60px rgba(0,229,255,0.18), 0 6px 20px rgba(0,0,0,0.5);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;background:var(--bg-0);color:var(--text);font-family:'Outfit',system-ui,sans-serif;min-height:100vh;overflow-x:hidden;}
+  body{
+    background:
+      radial-gradient(1200px 700px at 80% -10%, rgba(0,229,255,0.18), transparent 60%),
+      radial-gradient(900px 600px at -10% 110%, rgba(59,123,255,0.22), transparent 60%),
+      radial-gradient(600px 400px at 50% 50%, rgba(255,79,216,0.06), transparent 70%),
+      linear-gradient(180deg,#04060f 0%, #070a1c 60%, #04060f 100%);
+    background-attachment: fixed;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background-image:
+      linear-gradient(rgba(120,200,255,0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(120,200,255,0.045) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+  }
+  ::-webkit-scrollbar{width:10px;height:10px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--cyan),var(--blue));border-radius:10px;}
+
+  .topbar{
+    position:sticky;top:0;z-index:50;
+    backdrop-filter: blur(18px) saturate(1.4);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    background:linear-gradient(180deg, rgba(7,10,28,0.85), rgba(7,10,28,0.55));
+    border-bottom:1px solid var(--stroke);
+    padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  }
+  .brand{display:flex;align-items:center;gap:12px;cursor:pointer;}
+  .brand-logo{
+    width:42px;height:42px;border-radius:12px;
+    background: radial-gradient(circle at 30% 30%, var(--cyan), transparent 60%), linear-gradient(135deg, #001b3a, #00141f);
+    border:1px solid var(--stroke-2);
+    box-shadow:0 0 24px rgba(0,229,255,0.4), inset 0 0 12px rgba(0,229,255,0.25);
+    display:grid;place-items:center;font-family:'Orbitron',sans-serif;font-weight:900;color:var(--cyan);
+    text-shadow:0 0 12px var(--cyan);
+  }
+  .brand-name{font-family:'Orbitron',sans-serif;font-weight:800;letter-spacing:2px;font-size:16px;}
+  .brand-name span{background:linear-gradient(90deg,var(--cyan),var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .top-right{display:flex;align-items:center;gap:10px;}
+  .user-chip{padding:8px 12px;border-radius:999px;border:1px solid var(--stroke);background:var(--glass);font-size:12px;color:var(--muted);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+  .btn{
+    cursor:pointer;border:1px solid var(--stroke-2);background:var(--glass);
+    color:var(--text);padding:9px 14px;border-radius:10px;
+    font-family:inherit;font-weight:600;font-size:13px;letter-spacing:0.3px;
+    transition:transform .15s, box-shadow .2s, background .2s, border-color .2s;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .btn:hover{transform:translateY(-1px);box-shadow:var(--shadow);border-color:var(--cyan);}
+  .btn:active{transform:translateY(0);}
+  .btn.primary{
+    background:linear-gradient(135deg, rgba(0,229,255,0.25), rgba(59,123,255,0.25));
+    border-color:var(--cyan);box-shadow:0 0 18px rgba(0,229,255,0.25);color:#eaffff;
+  }
+  .btn.primary:hover{box-shadow:0 0 28px rgba(0,229,255,0.5);}
+  .btn.danger{border-color:rgba(255,85,119,0.5);color:#ffd1da;}
+  .btn.danger:hover{background:rgba(255,85,119,0.18);box-shadow:0 0 18px rgba(255,85,119,0.3);}
+  .btn.ghost{background:transparent;}
+  .btn.small{padding:6px 10px;font-size:12px;}
+
+  .page{display:none;padding:22px;max-width:1240px;margin:0 auto;position:relative;z-index:1;}
+  .page.active{display:block;animation:fadeUp .4s ease;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+  #page-auth{display:none;min-height:calc(100vh - 70px);align-items:center;justify-content:center;padding:30px 22px;}
+  #page-auth.active{display:flex;}
+  .auth-card{
+    width:100%;max-width:440px;background:var(--glass);border:1px solid var(--stroke);
+    border-radius:22px;padding:30px;box-shadow:var(--shadow-strong);backdrop-filter:blur(20px);
+    position:relative;overflow:hidden;
+  }
+  .auth-card::before{
+    content:"";position:absolute;inset:-1px;border-radius:22px;padding:1px;
+    background:linear-gradient(135deg, rgba(0,229,255,0.6), transparent 40%, rgba(255,79,216,0.4));
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;
+  }
+  .auth-title{font-family:'Orbitron',sans-serif;font-size:22px;letter-spacing:2px;margin:0 0 4px;}
+  .auth-sub{color:var(--muted);font-size:13px;margin-bottom:22px;}
+  .field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+  .field label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;}
+  .input, textarea{
+    background:rgba(4,8,22,0.75);border:1px solid var(--stroke);color:var(--text);
+    padding:12px 14px;border-radius:12px;font-family:inherit;font-size:14px;width:100%;outline:none;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .input:focus, textarea:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,229,255,0.15);}
+  .auth-actions{display:flex;flex-direction:column;gap:10px;margin-top:14px;}
+  .auth-switch{text-align:center;color:var(--muted);font-size:13px;margin-top:14px;}
+  .auth-switch a{color:var(--cyan);text-decoration:none;font-weight:600;cursor:pointer;}
+
+  .dash-header{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px;}
+  .dash-title{font-family:'Orbitron',sans-serif;font-size:22px;letter-spacing:2px;margin:0;}
+  .clock{padding:8px 14px;border-radius:12px;background:var(--glass);border:1px solid var(--stroke);font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan-soft);}
+  .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px;}
+  .stat{background:var(--glass);border:1px solid var(--stroke);border-radius:16px;padding:14px;position:relative;overflow:hidden;backdrop-filter:blur(14px);}
+  .stat::after{content:"";position:absolute;top:-30px;right:-30px;width:90px;height:90px;border-radius:50%;background:radial-gradient(circle, rgba(0,229,255,0.25), transparent 70%);}
+  .stat .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;}
+  .stat .value{font-family:'Orbitron',sans-serif;font-size:26px;font-weight:800;margin-top:6px;background:linear-gradient(135deg,var(--cyan),var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent;}
+
+  .actions-row{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap;}
+  .search{flex:1;min-width:200px;position:relative;}
+  .search input{padding-left:38px;}
+  .search::before{content:"⌕";position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:18px;}
+
+  .modal-bg{position:fixed;inset:0;background:rgba(2,4,12,0.7);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:100;padding:20px;}
+  .modal-bg.show{display:flex;animation:fadeIn .2s;}
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  .modal{background:var(--glass-2);border:1px solid var(--stroke-2);border-radius:20px;padding:24px;width:100%;max-width:460px;box-shadow:var(--shadow-strong);max-height:90vh;overflow-y:auto;}
+  .modal h3{font-family:'Orbitron',sans-serif;letter-spacing:1.5px;margin:0 0 16px;font-size:18px;}
+  .image-drop{
+    border:2px dashed var(--stroke-2);border-radius:14px;padding:18px;text-align:center;
+    cursor:pointer;transition:border-color .2s, background .2s;background:rgba(4,8,22,0.4);
+  }
+  .image-drop:hover{border-color:var(--cyan);background:rgba(0,229,255,0.05);}
+  .image-drop.has-image{padding:0;border-style:solid;}
+  .image-drop img{width:100%;height:180px;object-fit:cover;border-radius:12px;display:block;}
+  .image-drop .hint{color:var(--muted);font-size:13px;}
+  .image-drop .icon{font-size:32px;color:var(--cyan);margin-bottom:6px;}
+
+  .image-source-tabs{display:flex;gap:6px;margin-bottom:10px;}
+  .source-tab{
+    flex:1;padding:8px;border-radius:10px;border:1px solid var(--stroke);background:transparent;
+    color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;
+  }
+  .source-tab.active{background:rgba(0,229,255,0.15);border-color:var(--cyan);color:var(--cyan-soft);}
+
+  .projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;}
+  .project-card{background:var(--glass);border:1px solid var(--stroke);border-radius:18px;overflow:hidden;backdrop-filter:blur(14px);position:relative;transition:transform .25s, box-shadow .25s, border-color .25s;display:flex;flex-direction:column;}
+  .project-card:hover{transform:translateY(-4px);border-color:var(--stroke-2);box-shadow:var(--shadow-strong);}
+  .project-card.pinned{border-color:var(--cyan);box-shadow:0 0 22px rgba(0,229,255,0.18);}
+  .project-card .img-wrap{position:relative;width:100%;padding-bottom:55%;overflow:hidden;background:linear-gradient(135deg,#0a1230,#020410);}
+  .project-card .img-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  .project-card .img-wrap .placeholder{position:absolute;inset:0;display:grid;place-items:center;font-family:'Orbitron',sans-serif;font-size:38px;color:var(--cyan);opacity:.45;}
+  .project-card .body{padding:14px;display:flex;flex-direction:column;gap:8px;flex:1;}
+  .project-card .name{font-weight:700;font-size:15px;letter-spacing:0.3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .project-card .meta{font-size:11px;color:var(--muted);}
+  .project-card .toolbar{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto;}
+  .pin-badge{position:absolute;top:10px;left:10px;background:var(--cyan);color:#001423;padding:3px 8px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:1px;box-shadow:0 0 14px rgba(0,229,255,0.7);display:none;}
+  .project-card.pinned .pin-badge{display:block;}
+
+  .pv-header{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap;}
+  .pv-header h2{font-family:'Orbitron',sans-serif;margin:0;font-size:20px;letter-spacing:1.5px;flex:1;min-width:200px;}
+  .sections-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .section-card{background:var(--glass);border:1px solid var(--stroke);border-radius:18px;padding:22px;cursor:pointer;transition:transform .25s, box-shadow .25s, border-color .25s;position:relative;overflow:hidden;backdrop-filter:blur(14px);}
+  .section-card::after{content:"";position:absolute;top:-40px;right:-40px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle, var(--accent,rgba(0,229,255,0.3)), transparent 70%);opacity:.6;}
+  .section-card:hover{transform:translateY(-3px);border-color:var(--cyan);box-shadow:var(--shadow-strong);}
+  .section-card .sec-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;}
+  .section-card .sec-title{font-family:'Orbitron',sans-serif;font-size:18px;margin-top:6px;font-weight:700;}
+  .section-card .sec-info{font-size:12px;color:var(--muted);margin-top:10px;display:flex;gap:12px;flex-wrap:wrap;}
+
+  .editor-layout{display:grid;grid-template-columns:200px 1fr;gap:14px;}
+  .editor-side{background:var(--glass);border:1px solid var(--stroke);border-radius:14px;padding:10px;height:fit-content;position:sticky;top:80px;}
+  .side-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);transition:background .2s, color .2s;margin-bottom:4px;}
+  .side-item:hover{background:rgba(0,229,255,0.06);color:var(--text);}
+  .side-item.active{background:linear-gradient(135deg,rgba(0,229,255,0.18),rgba(59,123,255,0.12));color:var(--cyan-soft);}
+  .side-item .dot{width:8px;height:8px;border-radius:50%;background:var(--accent,var(--cyan));box-shadow:0 0 10px var(--accent,var(--cyan));}
+  .editor-main{background:var(--glass);border:1px solid var(--stroke);border-radius:14px;display:flex;flex-direction:column;min-height:60vh;}
+  .editor-toolbar{display:flex;gap:8px;padding:10px;border-bottom:1px solid var(--stroke);flex-wrap:wrap;align-items:center;}
+  .save-indicator{font-size:11px;padding:5px 10px;border-radius:999px;border:1px solid var(--stroke);font-family:'JetBrains Mono',monospace;margin-left:auto;}
+  .save-indicator[data-state="saved"]{color:var(--green);border-color:rgba(54,255,176,0.4);}
+  .save-indicator[data-state="unsaved"]{color:var(--yellow);border-color:rgba(255,216,74,0.4);}
+  .save-indicator[data-state="saving"]{color:var(--cyan);border-color:rgba(0,229,255,0.4);}
+  .save-indicator[data-state="error"]{color:var(--red);border-color:rgba(255,85,119,0.4);}
+  .save-indicator[data-state="ready"]{color:var(--muted);}
+  .code-area{flex:1;display:flex;}
+  .code-area textarea{flex:1;background:#04060f;color:#cfe6ff;border:none;outline:none;border-radius:0 0 14px 14px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.55;padding:14px;resize:none;min-height:50vh;tab-size:2;-moz-tab-size:2;}
+  .code-area textarea:disabled{background:#02040a;color:#7a8aa8;cursor:not-allowed;}
+  .editor-footer{display:flex;gap:14px;padding:8px 14px;border-top:1px solid var(--stroke);font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;flex-wrap:wrap;}
+  .editor-footer .grow{flex:1;}
+
+  .preview-modal{padding:0;max-width:90vw;width:900px;height:80vh;display:flex;flex-direction:column;}
+  .preview-bar{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--stroke);}
+  .preview-bar h3{margin:0;font-family:'Orbitron',sans-serif;letter-spacing:1.5px;font-size:16px;}
+  .preview-body{flex:1;display:flex;flex-direction:column;}
+  .preview-body iframe{flex:1;border:none;background:#fff;border-radius:0 0 20px 20px;}
+  .preview-console{background:#02040a;color:#7df9ff;font-family:'JetBrains Mono',monospace;font-size:12px;padding:10px;height:140px;overflow:auto;border-top:1px solid var(--stroke);white-space:pre-wrap;}
+
+  .toasts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+  .toast{background:var(--glass-2);border:1px solid var(--stroke-2);color:var(--text);padding:10px 18px;border-radius:12px;font-size:13px;box-shadow:var(--shadow-strong);animation:toastIn .25s ease;backdrop-filter:blur(12px);max-width:90vw;}
+  .toast.success{border-color:rgba(54,255,176,0.5);}
+  .toast.error{border-color:rgba(255,85,119,0.5);}
+  .toast.info{border-color:rgba(0,229,255,0.5);}
+  @keyframes toastIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+
+  .empty-state{text-align:center;padding:50px 20px;color:var(--muted);background:var(--glass);border:1px dashed var(--stroke-2);border-radius:18px;}
+  .empty-state .icon{font-size:48px;color:var(--cyan);opacity:.6;margin-bottom:10px;}
+  .upload-progress{height:6px;background:rgba(0,229,255,0.1);border-radius:6px;overflow:hidden;margin-top:8px;display:none;}
+  .upload-progress.show{display:block;}
+  .upload-progress .bar{height:100%;background:linear-gradient(90deg,var(--cyan),var(--blue));width:0;transition:width .2s;}
+
+  .confirm-modal h3{margin-bottom:8px;}
+  .confirm-modal p{color:var(--muted);margin:0 0 18px;font-size:14px;white-space:pre-line;}
+  .confirm-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;}
+
+  .info-box{
+    background:rgba(0,229,255,0.06);border:1px solid rgba(0,229,255,0.25);
+    border-radius:10px;padding:10px 12px;font-size:12px;color:var(--cyan-soft);margin-bottom:12px;line-height:1.6;
+  }
+  .info-box a{color:var(--cyan);}
+
+  @media (max-width: 880px){
+    .stats{grid-template-columns:repeat(2,1fr);}
+    .sections-grid{grid-template-columns:1fr;}
+    .editor-layout{grid-template-columns:1fr;}
+    .editor-side{position:static;display:flex;flex-wrap:wrap;}
+    .editor-side .side-item{flex:1;min-width:140px;margin-bottom:0;}
+    .topbar{padding:12px 14px;}
+    .brand-name{font-size:13px;}
+    .page{padding:14px;}
+    .user-chip{max-width:90px;}
+  }
+  @media (max-width: 480px){
+    .stats{grid-template-columns:repeat(2,1fr);}
+    .projects-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));}
+  }
+
+  .loader{display:inline-block;width:14px;height:14px;border-radius:50%;border:2px solid rgba(0,229,255,0.25);border-top-color:var(--cyan);animation:spin 0.8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .full-loader{position:fixed;inset:0;background:rgba(2,4,12,0.6);display:none;align-items:center;justify-content:center;z-index:300;backdrop-filter:blur(6px);}
+  .full-loader.show{display:flex;}
+  .full-loader .loader{width:42px;height:42px;border-width:3px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand" id="brandHome">
+    <div class="brand-logo">FS</div>
+    <div class="brand-name">FUN SK <span>CODE STORE</span></div>
+  </div>
+  <div class="top-right">
+    <button class="btn ghost small" id="settingsBtn" style="display:none;" title="Settings">⚙</button>
+    <div class="user-chip" id="userChip" style="display:none;"></div>
+    <button class="btn ghost small" id="logoutBtn" style="display:none;">Logout</button>
+  </div>
+</div>
+
+<div class="page" id="page-auth">
+  <div class="auth-card">
+    <h1 class="auth-title">WELCOME</h1>
+    <p class="auth-sub" id="authSub">Sign in to access your private code vault.</p>
+    <div class="field">
+      <label>Email</label>
+      <input class="input" type="email" id="authEmail" placeholder="you@example.com" autocomplete="email" />
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input class="input" type="password" id="authPassword" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+    <div class="auth-actions">
+      <button class="btn primary" id="authSubmitBtn">Sign In</button>
+    </div>
+    <div class="auth-switch">
+      <span id="authSwitchText">Don't have an account?</span>
+      <a id="authSwitchLink">Create one</a>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-dashboard">
+  <div class="dash-header">
+    <h1 class="dash-title">DASHBOARD</h1>
+    <div class="clock" id="clock"></div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="label">Total Projects</div><div class="value" id="stTotal">0</div></div>
+    <div class="stat"><div class="label">Edited Today</div><div class="value" id="stToday">0</div></div>
+    <div class="stat"><div class="label">Edited Yesterday</div><div class="value" id="stYesterday">0</div></div>
+    <div class="stat"><div class="label">Pinned</div><div class="value" id="stPinned">0</div></div>
+    <div class="stat"><div class="label">Starred</div><div class="value" id="stStarred">0</div></div>
+  </div>
+  <div class="actions-row">
+    <div class="search"><input class="input" type="text" id="searchInput" placeholder="Search projects..." /></div>
+    <button class="btn primary" id="addProjectBtn">+ New Project</button>
+  </div>
+  <div id="projectsContainer">
+    <div class="empty-state" id="emptyState">
+      <div class="icon">◇</div>
+      <div>No projects yet. Create your first project to get started.</div>
+    </div>
+    <div class="projects-grid" id="projectsGrid"></div>
+  </div>
+</div>
+
+<div class="page" id="page-project">
+  <div class="pv-header">
+    <button class="btn small" id="backToDash">← Back</button>
+    <h2 id="pvTitle">Project</h2>
+    <button class="btn small" id="changeImageBtn">Change Image</button>
+    <button class="btn small" id="renameBtn">Rename</button>
+  </div>
+  <div class="sections-grid" id="sectionsGrid"></div>
+</div>
+
+<div class="page" id="page-editor">
+  <div class="pv-header">
+    <button class="btn small" id="backToProject">← Back</button>
+    <h2 id="edTitle">Editor</h2>
+  </div>
+  <div class="editor-layout">
+    <div class="editor-side" id="editorSide"></div>
+    <div class="editor-main">
+      <div class="editor-toolbar">
+        <button class="btn small" id="btnCopy" title="Copy code">⎘ Copy</button>
+        <button class="btn small" id="btnSave" title="Save (Ctrl+S)">💾 Save</button>
+        <button class="btn small" id="btnUndo" title="Undo (Ctrl+Z)">↶ Undo</button>
+        <button class="btn small" id="btnRedo" title="Redo (Ctrl+Y)">↷ Redo</button>
+        <button class="btn small" id="btnLock" title="Lock editing">🔒 Lock</button>
+        <button class="btn small" id="btnRun" title="Run preview">▶ Run</button>
+        <div class="save-indicator" id="saveIndicator" data-state="ready">Ready</div>
+      </div>
+      <div class="code-area">
+        <textarea id="codeArea" spellcheck="false" placeholder="// Paste your code here..."></textarea>
+      </div>
+      <div class="editor-footer">
+        <span id="ftLines">Lines: 0</span>
+        <span id="ftChars">Chars: 0</span>
+        <span class="grow"></span>
+        <span id="ftSection">—</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="addProjectModal">
+  <div class="modal">
+    <h3>NEW PROJECT</h3>
+    <div class="field">
+      <label>Project Name</label>
+      <input class="input" id="newProjName" type="text" maxlength="60" placeholder="My Sketchware Project" />
+    </div>
+    <div class="field">
+      <label>Project Image (optional)</label>
+      <div class="image-source-tabs">
+        <button class="source-tab active" data-src="upload">Upload (ImgBB)</button>
+        <button class="source-tab" data-src="url">Paste URL</button>
+      </div>
+      <div id="srcUpload">
+        <div class="image-drop" id="imageDrop">
+          <div class="icon">⛶</div>
+          <div class="hint">Tap to pick an image (max 12MB)</div>
+        </div>
+        <input type="file" id="imageInput" accept="image/*" style="display:none;" />
+        <div class="upload-progress" id="uploadProgress"><div class="bar"></div></div>
+      </div>
+      <div id="srcUrl" style="display:none;">
+        <input class="input" id="imageUrlInput" type="url" placeholder="https://i.ibb.co/... or any direct image URL" />
+      </div>
+    </div>
+    <div class="confirm-actions">
+      <button class="btn" id="cancelAddProject">Cancel</button>
+      <button class="btn primary" id="confirmAddProject">Create</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="renameModal">
+  <div class="modal">
+    <h3>RENAME PROJECT</h3>
+    <div class="field">
+      <label>Project Name</label>
+      <input class="input" id="renameInput" type="text" maxlength="60" />
+    </div>
+    <div class="confirm-actions">
+      <button class="btn" id="cancelRename">Cancel</button>
+      <button class="btn primary" id="confirmRename">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="settingsModal">
+  <div class="modal">
+    <h3>SETTINGS</h3>
+    <div class="info-box">
+      Default ImgBB key already set hai — image upload directly chalega.<br>
+      Agar apni key use karni hai to yahan paste karo. Empty rakhne se default use hogi.<br><br>
+      Apni free key: <a href="https://api.imgbb.com" target="_blank">api.imgbb.com</a>
+    </div>
+    <div class="field">
+      <label>ImgBB API Key (optional override)</label>
+      <input class="input" id="imgbbKeyInput" type="text" placeholder="Empty = default key use karo" />
+    </div>
+    <div class="confirm-actions">
+      <button class="btn" id="cancelSettings">Cancel</button>
+      <button class="btn primary" id="saveSettings">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="confirmModal">
+  <div class="modal confirm-modal">
+    <h3 id="confirmTitle">Confirm</h3>
+    <p id="confirmMsg">Are you sure?</p>
+    <div class="confirm-actions">
+      <button class="btn" id="confirmNo">Cancel</button>
+      <button class="btn danger" id="confirmYes">Yes</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="previewModal">
+  <div class="modal preview-modal">
+    <div class="preview-bar">
+      <h3>RUN PREVIEW</h3>
+      <button class="btn small" id="closePreview">Close ✕</button>
+    </div>
+    <div class="preview-body">
+      <iframe id="previewIframe" sandbox="allow-scripts" referrerpolicy="no-referrer"></iframe>
+      <div class="preview-console" id="previewConsole">[console]</div>
+    </div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+<div class="full-loader" id="fullLoader"><div class="loader"></div></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import {
+  getAuth, onAuthStateChanged, signInWithEmailAndPassword,
+  createUserWithEmailAndPassword, signOut
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import {
+  getFirestore, collection, doc, addDoc, updateDoc, deleteDoc,
+  serverTimestamp, onSnapshot, query, orderBy
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBRmrLSjsBauVnchZKXb-yN6uo3Ckb5kDw",
+  authDomain: "funskcodestore.firebaseapp.com",
+  projectId: "funskcodestore",
+  storageBucket: "funskcodestore.firebasestorage.app",
+  messagingSenderId: "187461255747",
+  appId: "1:187461255747:web:bc172f81ca37b9b11a8af6",
+  measurementId: "G-32SXXJ5RTX"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const state = {
+  user: null,
+  authMode: "login",
+  projects: [],
+  projectsUnsub: null,
+  currentProject: null,
+  currentSection: null,
+  editor: {
+    history: [], historyIndex: -1, lastSavedCode: "",
+    autosaveTimer: null, locked: false, suppressHistory: false
+  },
+  pendingImageFile: null,
+  imgSource: "upload"
+};
+
+const SECTIONS = [
+  { key:"real",   title:"Real Code Logic",   accent:"rgba(0,229,255,0.35)" },
+  { key:"fake",   title:"Fake Code Logic",   accent:"rgba(255,79,216,0.32)" },
+  { key:"result", title:"Result Code Logic", accent:"rgba(54,255,176,0.32)" },
+  { key:"design", title:"Design / UI Code",  accent:"rgba(255,216,74,0.32)" }
+];
+
+const $ = id => document.getElementById(id);
+const escapeHtml = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+
+function toast(msg, type="info", ms=2800){
+  const el = document.createElement("div");
+  el.className = "toast " + type;
+  el.textContent = msg;
+  $("toasts").appendChild(el);
+  setTimeout(() => { el.style.opacity = "0"; el.style.transform = "translateY(8px)"; }, ms - 250);
+  setTimeout(() => el.remove(), ms);
+}
+function showLoader(show){ $("fullLoader").classList.toggle("show", show); }
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  $(id).classList.add("active");
+}
+function todayKey(){
+  const d = new Date();
+  return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+}
+function yesterdayKey(){
+  const d = new Date(); d.setDate(d.getDate()-1);
+  return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+}
+function fmtDate(ts){
+  if(!ts) return "—";
+  try{
+    const d = ts.toDate ? ts.toDate() : new Date(ts);
+    return d.toLocaleDateString(undefined,{ year:"numeric", month:"short", day:"numeric" }) + " " +
+           d.toLocaleTimeString(undefined,{ hour:"2-digit", minute:"2-digit" });
+  }catch(e){ return "—"; }
+}
+function startClock(){
+  const upd = () => {
+    const d = new Date();
+    $("clock").textContent = d.toLocaleDateString(undefined,{weekday:"short", month:"short", day:"numeric"}) +
+      "  ·  " + d.toLocaleTimeString();
+  };
+  upd(); setInterval(upd,1000);
+}
+startClock();
+
+// Default ImgBB API key (hardcoded). Settings me override kar sakte ho.
+const DEFAULT_IMGBB_KEY = "f4d5ed8e0876aec98f3a3cc6a45e7de2";
+function getImgbbKey(){ return localStorage.getItem("imgbb_api_key") || DEFAULT_IMGBB_KEY; }
+function setImgbbKey(k){
+  if(k) localStorage.setItem("imgbb_api_key", k);
+  else localStorage.removeItem("imgbb_api_key");
+}
+
+function confirmDialog(title, msg, yesLabel, noLabel){
+  return new Promise(resolve => {
+    $("confirmTitle").textContent = title;
+    $("confirmMsg").textContent = msg;
+    const yes = $("confirmYes"), no = $("confirmNo");
+    yes.textContent = yesLabel || "Yes";
+    no.textContent = noLabel || "Cancel";
+    $("confirmModal").classList.add("show");
+    const done = (val) => {
+      $("confirmModal").classList.remove("show");
+      yes.removeEventListener("click", onYes);
+      no.removeEventListener("click", onNo);
+      resolve(val);
+    };
+    const onYes = () => done(true);
+    const onNo  = () => done(false);
+    yes.addEventListener("click", onYes);
+    no.addEventListener("click", onNo);
+  });
+}
+
+/* Settings */
+$("settingsBtn").addEventListener("click", () => {
+  const stored = localStorage.getItem("imgbb_api_key");
+  $("imgbbKeyInput").value = stored || "";
+  $("settingsModal").classList.add("show");
+});
+$("cancelSettings").addEventListener("click", () => $("settingsModal").classList.remove("show"));
+$("saveSettings").addEventListener("click", () => {
+  const k = $("imgbbKeyInput").value.trim();
+  setImgbbKey(k);
+  $("settingsModal").classList.remove("show");
+  toast(k ? "Custom API key saved" : "Using default API key", "success");
+});
+
+/* Auth */
+$("authSwitchLink").addEventListener("click", () => {
+  state.authMode = state.authMode === "login" ? "register" : "login";
+  $("authSub").textContent = state.authMode === "login"
+    ? "Sign in to access your private code vault."
+    : "Create a new account to start storing your code.";
+  $("authSubmitBtn").textContent = state.authMode === "login" ? "Sign In" : "Create Account";
+  $("authSwitchText").textContent = state.authMode === "login" ? "Don't have an account?" : "Already have an account?";
+  $("authSwitchLink").textContent = state.authMode === "login" ? "Create one" : "Sign in";
+});
+
+$("authSubmitBtn").addEventListener("click", async () => {
+  const email = $("authEmail").value.trim();
+  const password = $("authPassword").value;
+  if(!email || !password){ toast("Email aur password dono dalo", "error"); return; }
+  if(password.length < 6){ toast("Password minimum 6 characters", "error"); return; }
+  showLoader(true);
+  try{
+    if(state.authMode === "login"){
+      await signInWithEmailAndPassword(auth, email, password);
+      toast("Welcome back!", "success");
+    }else{
+      await createUserWithEmailAndPassword(auth, email, password);
+      toast("Account created", "success");
+    }
+  }catch(e){
+    toast(e.message || "Auth failed", "error");
+  }finally{
+    showLoader(false);
+  }
+});
+
+$("logoutBtn").addEventListener("click", async () => {
+  await signOut(auth);
+  toast("Logged out", "info");
+});
+
+onAuthStateChanged(auth, user => {
+  state.user = user;
+  if(user){
+    $("userChip").style.display = "block";
+    $("userChip").textContent = user.email;
+    $("logoutBtn").style.display = "inline-flex";
+    $("settingsBtn").style.display = "inline-flex";
+    showPage("page-dashboard");
+    subscribeProjects();
+  }else{
+    $("userChip").style.display = "none";
+    $("logoutBtn").style.display = "none";
+    $("settingsBtn").style.display = "none";
+    if(state.projectsUnsub){ state.projectsUnsub(); state.projectsUnsub = null; }
+    state.projects = [];
+    showPage("page-auth");
+  }
+});
+
+/* Projects subscription */
+function subscribeProjects(){
+  if(state.projectsUnsub) state.projectsUnsub();
+  const colRef = collection(db, "users", state.user.uid, "projects");
+  const q = query(colRef, orderBy("updatedAt","desc"));
+  state.projectsUnsub = onSnapshot(q, snap => {
+    state.projects = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+    renderDashboard();
+    if(state.currentProject){
+      const fresh = state.projects.find(p => p.id === state.currentProject.id);
+      if(fresh){ state.currentProject = fresh; renderProjectView(); }
+    }
+  }, err => {
+    console.error(err);
+    toast("Sync error: " + err.message, "error", 5000);
+  });
+}
+
+/* Dashboard */
+function sortProjects(list){
+  return [...list].sort((a,b) => {
+    if((b.pinned?1:0) !== (a.pinned?1:0)) return (b.pinned?1:0) - (a.pinned?1:0);
+    if((b.starred?1:0) !== (a.starred?1:0)) return (b.starred?1:0) - (a.starred?1:0);
+    const ta = a.updatedAt?.toMillis ? a.updatedAt.toMillis() : 0;
+    const tb = b.updatedAt?.toMillis ? b.updatedAt.toMillis() : 0;
+    return tb - ta;
+  });
+}
+
+function renderDashboard(){
+  const list = state.projects;
+  $("stTotal").textContent = list.length;
+  $("stPinned").textContent = list.filter(p => p.pinned).length;
+  $("stStarred").textContent = list.filter(p => p.starred).length;
+  $("stToday").textContent = list.filter(p => p.updatedDay === todayKey()).length;
+  $("stYesterday").textContent = list.filter(p => p.updatedDay === yesterdayKey()).length;
+
+  const term = $("searchInput").value.trim().toLowerCase();
+  let filtered = list;
+  if(term) filtered = list.filter(p => (p.name||"").toLowerCase().includes(term));
+  filtered = sortProjects(filtered);
+
+  const grid = $("projectsGrid");
+  grid.innerHTML = "";
+  if(filtered.length === 0){
+    $("emptyState").style.display = "block";
+    return;
+  }
+  $("emptyState").style.display = "none";
+
+  filtered.forEach(p => {
+    const card = document.createElement("div");
+    card.className = "project-card" + (p.pinned ? " pinned" : "");
+    const imgHtml = p.image
+      ? `<img src="${escapeHtml(p.image)}" alt="" onerror="this.style.display='none'">`
+      : `<div class="placeholder">${escapeHtml((p.name||"?").slice(0,1).toUpperCase())}</div>`;
+    card.innerHTML = `
+      <div class="img-wrap">
+        ${imgHtml}
+        <div class="pin-badge">PINNED</div>
+      </div>
+      <div class="body">
+        <div class="name">${escapeHtml(p.name||"Untitled")}</div>
+        <div class="meta">Updated: ${escapeHtml(fmtDate(p.updatedAt))}</div>
+        <div class="toolbar">
+          <button class="btn small" data-act="open">Open</button>
+          <button class="btn small" data-act="pin">${p.pinned ? "Unpin" : "Pin"}</button>
+          <button class="btn small" data-act="star">${p.starred ? "★" : "☆"}</button>
+          <button class="btn small danger" data-act="del">Delete</button>
+        </div>
+      </div>
+    `;
+    card.querySelectorAll("[data-act]").forEach(btn => {
+      btn.addEventListener("click", e => {
+        e.stopPropagation();
+        const act = btn.dataset.act;
+        if(act === "open") openProject(p.id);
+        else if(act === "pin") togglePin(p.id, !p.pinned);
+        else if(act === "star") toggleStar(p.id, !p.starred);
+        else if(act === "del") deleteProject(p.id, p.name);
+      });
+    });
+    grid.appendChild(card);
+  });
+}
+
+$("searchInput").addEventListener("input", renderDashboard);
+
+/* Image source tabs */
+document.querySelectorAll(".source-tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".source-tab").forEach(t => t.classList.remove("active"));
+    tab.classList.add("active");
+    state.imgSource = tab.dataset.src;
+    $("srcUpload").style.display = state.imgSource === "upload" ? "block" : "none";
+    $("srcUrl").style.display = state.imgSource === "url" ? "block" : "none";
+  });
+});
+
+/* Add project */
+$("addProjectBtn").addEventListener("click", () => {
+  state.pendingImageFile = null;
+  state.imgSource = "upload";
+  document.querySelectorAll(".source-tab").forEach((t, i) => t.classList.toggle("active", i === 0));
+  $("srcUpload").style.display = "block";
+  $("srcUrl").style.display = "none";
+  $("newProjName").value = "";
+  $("imageUrlInput").value = "";
+  $("imageDrop").classList.remove("has-image");
+  $("imageDrop").innerHTML = `<div class="icon">⛶</div><div class="hint">Tap to pick an image (max 12MB)</div>`;
+  $("uploadProgress").classList.remove("show");
+  $("uploadProgress").querySelector(".bar").style.width = "0%";
+  $("addProjectModal").classList.add("show");
+  setTimeout(() => $("newProjName").focus(), 100);
+});
+
+$("cancelAddProject").addEventListener("click", () => $("addProjectModal").classList.remove("show"));
+$("imageDrop").addEventListener("click", () => $("imageInput").click());
+
+$("imageInput").addEventListener("change", async (e) => {
+  const file = e.target.files?.[0];
+  if(!file) return;
+  if(file.size > 12 * 1024 * 1024){
+    toast("Image > 12MB allowed nahi", "error");
+    e.target.value = "";
+    return;
+  }
+  try{
+    const compressed = await compressImage(file, 1280, 0.85);
+    state.pendingImageFile = compressed;
+    const url = URL.createObjectURL(compressed);
+    $("imageDrop").classList.add("has-image");
+    $("imageDrop").innerHTML = `<img src="${url}" alt="">`;
+  }catch(err){
+    toast("Image read error: " + err.message, "error");
+  }
+});
+
+async function compressImage(file, maxDim, quality){
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const reader = new FileReader();
+    reader.onload = () => {
+      img.onload = () => {
+        let { width, height } = img;
+        if(width > maxDim || height > maxDim){
+          if(width >= height){ height = Math.round(height * maxDim / width); width = maxDim; }
+          else { width = Math.round(width * maxDim / height); height = maxDim; }
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+        canvas.toBlob(blob => {
+          if(!blob) return reject(new Error("Compress failed"));
+          resolve(new File([blob], (file.name||"image").replace(/\.[^.]+$/,"") + ".jpg", { type:"image/jpeg" }));
+        }, "image/jpeg", quality);
+      };
+      img.onerror = () => reject(new Error("Image load failed"));
+      img.src = reader.result;
+    };
+    reader.onerror = () => reject(new Error("File read failed"));
+    reader.readAsDataURL(file);
+  });
+}
+
+function fileToBase64(file){
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => {
+      const s = r.result;
+      const comma = s.indexOf(",");
+      resolve(comma >= 0 ? s.slice(comma + 1) : s);
+    };
+    r.onerror = () => reject(new Error("Read failed"));
+    r.readAsDataURL(file);
+  });
+}
+
+// ImgBB upload via XHR (for upload progress)
+function uploadToImgBB(file, apiKey){
+  return new Promise(async (resolve, reject) => {
+    if(!apiKey){ reject(new Error("ImgBB API key missing. Settings ⚙ me set karo.")); return; }
+    try{
+      const base64 = await fileToBase64(file);
+      const form = new FormData();
+      form.append("image", base64);
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", `https://api.imgbb.com/1/upload?key=${encodeURIComponent(apiKey)}`);
+      xhr.upload.onprogress = (e) => {
+        if(e.lengthComputable){
+          const pct = (e.loaded / e.total) * 100;
+          $("uploadProgress").querySelector(".bar").style.width = pct + "%";
+        }
+      };
+      xhr.onload = () => {
+        try{
+          const json = JSON.parse(xhr.responseText);
+          if(json.success && json.data?.url){
+            resolve(json.data.url);
+          } else {
+            reject(new Error(json.error?.message || "ImgBB upload failed (status " + xhr.status + ")"));
+          }
+        }catch(e){ reject(new Error("ImgBB response parse error")); }
+      };
+      xhr.onerror = () => reject(new Error("ImgBB network error"));
+      $("uploadProgress").classList.add("show");
+      $("uploadProgress").querySelector(".bar").style.width = "0%";
+      xhr.send(form);
+    }catch(e){ reject(e); }
+  });
+}
+
+$("confirmAddProject").addEventListener("click", async () => {
+  const name = $("newProjName").value.trim();
+  if(!name){ toast("Project name required", "error"); return; }
+  if(name.length > 60){ toast("Name too long (max 60)", "error"); return; }
+
+  let imageUrl = "";
+
+  // Upload tab + file selected -> ImgBB
+  if(state.imgSource === "upload" && state.pendingImageFile){
+    const key = getImgbbKey();
+    showLoader(true);
+    try{
+      imageUrl = await uploadToImgBB(state.pendingImageFile, key);
+    }catch(e){
+      showLoader(false);
+      $("uploadProgress").classList.remove("show");
+      toast("Upload failed: " + e.message, "error", 4000);
+      return;
+    }
+    $("uploadProgress").classList.remove("show");
+  } else if(state.imgSource === "url"){
+    const u = $("imageUrlInput").value.trim();
+    if(u){
+      if(!/^https?:\/\//i.test(u)){ toast("Invalid URL (http/https start hona chahiye)", "error"); return; }
+      if(u.length > 2000){ toast("URL too long", "error"); return; }
+      imageUrl = u;
+    }
+    showLoader(true);
+  } else {
+    showLoader(true);
+  }
+
+  try{
+    const colRef = collection(db, "users", state.user.uid, "projects");
+    await addDoc(colRef, {
+      name,
+      image: imageUrl,
+      pinned: false,
+      starred: false,
+      codes: { real:"", fake:"", result:"", design:"" },
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+      createdDay: todayKey(),
+      updatedDay: todayKey()
+    });
+    toast("Project created", "success");
+    $("addProjectModal").classList.remove("show");
+  }catch(e){
+    console.error("Firestore create error:", e);
+    let m = e.message || "Create failed";
+    if(/permission/i.test(m)){
+      m = "Permission denied. Firebase Console > Firestore > Rules me rules paste karke Publish karo.";
+    }
+    toast(m, "error", 6000);
+  }finally{
+    showLoader(false);
+  }
+});
+
+/* Pin / Star / Delete */
+async function togglePin(id, val){
+  try{
+    await updateDoc(doc(db,"users",state.user.uid,"projects",id), {
+      pinned: val, updatedAt: serverTimestamp(), updatedDay: todayKey()
+    });
+  }catch(e){ toast("Pin failed: " + e.message, "error"); }
+}
+async function toggleStar(id, val){
+  try{
+    await updateDoc(doc(db,"users",state.user.uid,"projects",id), {
+      starred: val, updatedAt: serverTimestamp(), updatedDay: todayKey()
+    });
+  }catch(e){ toast("Star failed: " + e.message, "error"); }
+}
+async function deleteProject(id, name){
+  const ok = await confirmDialog("Delete Project?", `"${name}" permanently delete ho jayega. Sure?`, "Delete", "Cancel");
+  if(!ok) return;
+  showLoader(true);
+  try{
+    await deleteDoc(doc(db,"users",state.user.uid,"projects",id));
+    toast("Deleted", "success");
+  }catch(e){
+    toast("Delete failed: " + e.message, "error");
+  }finally{ showLoader(false); }
+}
+
+/* Project View */
+function openProject(id){
+  const p = state.projects.find(x => x.id === id);
+  if(!p) return;
+  state.currentProject = p;
+  renderProjectView();
+  showPage("page-project");
+}
+$("backToDash").addEventListener("click", () => {
+  state.currentProject = null;
+  showPage("page-dashboard");
+});
+
+function renderProjectView(){
+  const p = state.currentProject;
+  $("pvTitle").textContent = p.name;
+  const grid = $("sectionsGrid");
+  grid.innerHTML = "";
+  SECTIONS.forEach(sec => {
+    const code = (p.codes && p.codes[sec.key]) || "";
+    const lines = code ? code.split("\n").length : 0;
+    const chars = code.length;
+    const card = document.createElement("div");
+    card.className = "section-card";
+    card.style.setProperty("--accent", sec.accent);
+    card.innerHTML = `
+      <div class="sec-label">${escapeHtml(sec.key.toUpperCase())}</div>
+      <div class="sec-title">${escapeHtml(sec.title)}</div>
+      <div class="sec-info">
+        <span>📄 ${lines} lines</span>
+        <span>✎ ${chars} chars</span>
+        <span>${code ? "● filled" : "○ empty"}</span>
+      </div>
+    `;
+    card.addEventListener("click", () => openEditor(sec.key));
+    grid.appendChild(card);
+  });
+}
+
+$("renameBtn").addEventListener("click", () => {
+  if(!state.currentProject) return;
+  $("renameInput").value = state.currentProject.name;
+  $("renameModal").classList.add("show");
+  setTimeout(() => $("renameInput").focus(), 100);
+});
+$("cancelRename").addEventListener("click", () => $("renameModal").classList.remove("show"));
+$("confirmRename").addEventListener("click", async () => {
+  const name = $("renameInput").value.trim();
+  if(!name){ toast("Name empty", "error"); return; }
+  if(name.length > 60){ toast("Max 60 chars", "error"); return; }
+  showLoader(true);
+  try{
+    await updateDoc(doc(db,"users",state.user.uid,"projects",state.currentProject.id), {
+      name, updatedAt: serverTimestamp(), updatedDay: todayKey()
+    });
+    $("renameModal").classList.remove("show");
+    toast("Renamed", "success");
+  }catch(e){ toast("Rename failed: " + e.message, "error"); }
+  finally{ showLoader(false); }
+});
+
+$("changeImageBtn").addEventListener("click", async () => {
+  const choice = await confirmDialog(
+    "Change Image",
+    "Upload new image (ImgBB)\nya\nPaste image URL?",
+    "Upload",
+    "Paste URL"
+  );
+  if(choice){
+    const inp = document.createElement("input");
+    inp.type = "file"; inp.accept = "image/*";
+    inp.onchange = async () => {
+      const file = inp.files?.[0];
+      if(!file) return;
+      if(file.size > 12*1024*1024){ toast("Max 12MB", "error"); return; }
+      const key = getImgbbKey();
+      showLoader(true);
+      try{
+        const compressed = await compressImage(file, 1280, 0.85);
+        const url = await uploadToImgBB(compressed, key);
+        await updateDoc(doc(db,"users",state.user.uid,"projects",state.currentProject.id), {
+          image: url, updatedAt: serverTimestamp(), updatedDay: todayKey()
+        });
+        toast("Image updated", "success");
+      }catch(e){ toast("Image update failed: " + e.message, "error"); }
+      finally{ showLoader(false); $("uploadProgress").classList.remove("show"); }
+    };
+    inp.click();
+  } else {
+    const url = prompt("Paste image URL:");
+    if(!url) return;
+    if(!/^https?:\/\//i.test(url)){ toast("Invalid URL", "error"); return; }
+    if(url.length > 2000){ toast("URL too long", "error"); return; }
+    showLoader(true);
+    try{
+      await updateDoc(doc(db,"users",state.user.uid,"projects",state.currentProject.id), {
+        image: url, updatedAt: serverTimestamp(), updatedDay: todayKey()
+      });
+      toast("Image updated", "success");
+    }catch(e){ toast("Update failed: " + e.message, "error"); }
+    finally{ showLoader(false); }
+  }
+});
+
+/* Code Editor */
+function openEditor(secKey){
+  state.currentSection = secKey;
+  buildEditorSide();
+  loadSectionCode();
+  showPage("page-editor");
+}
+$("backToProject").addEventListener("click", async () => {
+  await saveCurrentSection(true);
+  showPage("page-project");
+});
+
+function buildEditorSide(){
+  const side = $("editorSide"); side.innerHTML = "";
+  SECTIONS.forEach(sec => {
+    const item = document.createElement("div");
+    item.className = "side-item" + (sec.key === state.currentSection ? " active" : "");
+    item.style.setProperty("--accent", sec.accent);
+    item.innerHTML = `<span class="dot"></span><span>${escapeHtml(sec.title)}</span>`;
+    item.addEventListener("click", async () => {
+      if(sec.key === state.currentSection) return;
+      await saveCurrentSection(true);
+      state.currentSection = sec.key;
+      buildEditorSide();
+      loadSectionCode();
+    });
+    side.appendChild(item);
+  });
+}
+
+function loadSectionCode(){
+  const p = state.currentProject;
+  const sec = SECTIONS.find(s => s.key === state.currentSection);
+  $("edTitle").textContent = p.name + " — " + sec.title;
+  $("ftSection").textContent = sec.title;
+  const code = (p.codes && p.codes[sec.key]) || "";
+  state.editor.suppressHistory = true;
+  $("codeArea").value = code;
+  state.editor.lastSavedCode = code;
+  state.editor.history = [code];
+  state.editor.historyIndex = 0;
+  state.editor.suppressHistory = false;
+  state.editor.locked = false;
+  $("codeArea").disabled = false;
+  $("btnLock").textContent = "🔒 Lock";
+  setSaveState("ready");
+  updateFooter();
+}
+
+function updateFooter(){
+  const v = $("codeArea").value;
+  $("ftLines").textContent = "Lines: " + (v ? v.split("\n").length : 0);
+  $("ftChars").textContent = "Chars: " + v.length;
+}
+
+function setSaveState(s){
+  const el = $("saveIndicator");
+  el.dataset.state = s;
+  el.textContent = { ready:"Ready", unsaved:"Unsaved", saving:"Saving…", saved:"Saved", error:"Save failed" }[s] || s;
+}
+
+const codeArea = $("codeArea");
+codeArea.addEventListener("input", () => {
+  if(state.editor.locked){ return; }
+  if(!state.editor.suppressHistory){
+    const idx = state.editor.historyIndex;
+    state.editor.history = state.editor.history.slice(0, idx + 1);
+    state.editor.history.push(codeArea.value);
+    if(state.editor.history.length > 200) state.editor.history.shift();
+    state.editor.historyIndex = state.editor.history.length - 1;
+  }
+  updateFooter();
+  if(codeArea.value !== state.editor.lastSavedCode){
+    setSaveState("unsaved");
+    clearTimeout(state.editor.autosaveTimer);
+    state.editor.autosaveTimer = setTimeout(() => saveCurrentSection(false), 1500);
+  } else {
+    setSaveState("saved");
+  }
+});
+
+codeArea.addEventListener("keydown", (e) => {
+  if(e.key === "Tab"){
+    e.preventDefault();
+    const start = codeArea.selectionStart, end = codeArea.selectionEnd;
+    codeArea.value = codeArea.value.slice(0,start) + "  " + codeArea.value.slice(end);
+    codeArea.selectionStart = codeArea.selectionEnd = start + 2;
+    codeArea.dispatchEvent(new Event("input"));
+  }
+  if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s"){
+    e.preventDefault(); saveCurrentSection(true);
+  }
+  if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z" && !e.shiftKey){
+    e.preventDefault(); undo();
+  }
+  if(((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "y") ||
+     ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "z")){
+    e.preventDefault(); redo();
+  }
+});
+
+function undo(){
+  if(state.editor.historyIndex > 0){
+    state.editor.historyIndex--;
+    const v = state.editor.history[state.editor.historyIndex];
+    state.editor.suppressHistory = true;
+    codeArea.value = v;
+    state.editor.suppressHistory = false;
+    updateFooter();
+    if(codeArea.value !== state.editor.lastSavedCode) setSaveState("unsaved");
+    else setSaveState("saved");
+  }
+}
+function redo(){
+  if(state.editor.historyIndex < state.editor.history.length - 1){
+    state.editor.historyIndex++;
+    const v = state.editor.history[state.editor.historyIndex];
+    state.editor.suppressHistory = true;
+    codeArea.value = v;
+    state.editor.suppressHistory = false;
+    updateFooter();
+    if(codeArea.value !== state.editor.lastSavedCode) setSaveState("unsaved");
+    else setSaveState("saved");
+  }
+}
+
+$("btnUndo").addEventListener("click", undo);
+$("btnRedo").addEventListener("click", redo);
+$("btnCopy").addEventListener("click", async () => {
+  try{
+    await navigator.clipboard.writeText(codeArea.value);
+    toast("Copied", "success");
+  }catch(e){
+    codeArea.select();
+    document.execCommand("copy");
+    toast("Copied", "success");
+  }
+});
+$("btnSave").addEventListener("click", () => saveCurrentSection(true));
+$("btnLock").addEventListener("click", () => {
+  state.editor.locked = !state.editor.locked;
+  codeArea.disabled = state.editor.locked;
+  $("btnLock").textContent = state.editor.locked ? "🔓 Unlock" : "🔒 Lock";
+  toast(state.editor.locked ? "Editing locked" : "Editing unlocked", "info", 1500);
+});
+
+async function saveCurrentSection(showMsg){
+  if(!state.currentProject || !state.currentSection) return;
+  const code = codeArea.value;
+  if(code === state.editor.lastSavedCode){
+    if(showMsg) toast("Already saved", "info", 1200);
+    return;
+  }
+  if(code.length > 500000){
+    setSaveState("error");
+    toast("Code too large (max ~500KB per section)", "error");
+    return;
+  }
+  setSaveState("saving");
+  try{
+    const newCodes = { ...(state.currentProject.codes || {}) };
+    newCodes[state.currentSection] = code;
+    await updateDoc(doc(db,"users",state.user.uid,"projects",state.currentProject.id), {
+      codes: newCodes,
+      updatedAt: serverTimestamp(),
+      updatedDay: todayKey()
+    });
+    state.editor.lastSavedCode = code;
+    state.currentProject.codes = newCodes;
+    setSaveState("saved");
+    if(showMsg) toast("Saved", "success", 1200);
+  }catch(e){
+    setSaveState("error");
+    toast("Save failed: " + e.message, "error");
+  }
+}
+
+window.addEventListener("beforeunload", (e) => {
+  if(codeArea.value !== state.editor.lastSavedCode && document.getElementById("page-editor").classList.contains("active")){
+    e.preventDefault();
+    e.returnValue = "";
+  }
+});
+
+/* Run Preview */
+$("btnRun").addEventListener("click", () => {
+  const code = codeArea.value;
+  if(!code.trim()){ toast("Empty code", "info"); return; }
+  $("previewModal").classList.add("show");
+  const iframe = $("previewIframe");
+  const consoleBox = $("previewConsole");
+  consoleBox.textContent = "[console]\n";
+
+  const looksLikeHTML = /<html|<body|<div|<head|<!doctype/i.test(code);
+  let html;
+  if(looksLikeHTML){
+    html = `<!doctype html><html><head><meta charset="utf-8"><style>body{font-family:sans-serif;padding:12px;}</style>
+<script>(function(){
+  function send(level, args){
+    parent.postMessage({__pv:true, level, msg: Array.from(args).map(a=>{try{return typeof a==="object"?JSON.stringify(a):String(a);}catch(e){return String(a);}}).join(" ")}, "*");
+  }
+  ["log","warn","error","info"].forEach(k=>{ const o=console[k]; console[k]=function(){ send(k, arguments); try{o.apply(console,arguments);}catch(e){} }; });
+  window.onerror=(m,s,l,c)=>{ send("error",[m+" @"+l+":"+c]); };
+})();<\/script>
+</head><body>${code}</body></html>`;
+  } else {
+    html = `<!doctype html><html><head><meta charset="utf-8"></head><body>
+<script>(function(){
+  function send(level, args){
+    parent.postMessage({__pv:true, level, msg: Array.from(args).map(a=>{try{return typeof a==="object"?JSON.stringify(a):String(a);}catch(e){return String(a);}}).join(" ")}, "*");
+  }
+  ["log","warn","error","info"].forEach(k=>{ const o=console[k]; console[k]=function(){ send(k, arguments); try{o.apply(console,arguments);}catch(e){} }; });
+  window.onerror=(m,s,l,c)=>{ send("error",[m+" @"+l+":"+c]); };
+  try{
+    ${code}
+  }catch(e){ send("error",[e.message]); }
+})();<\/script>
+<div style="font-family:monospace;color:#444;padding:10px;">JavaScript executed. Check console output below ↓</div>
+</body></html>`;
+  }
+  iframe.srcdoc = html;
+});
+
+window.addEventListener("message", (e) => {
+  if(e.data && e.data.__pv){
+    const box = $("previewConsole");
+    box.textContent += `[${e.data.level}] ${e.data.msg}\n`;
+    box.scrollTop = box.scrollHeight;
+  }
+});
+
+$("closePreview").addEventListener("click", () => {
+  $("previewModal").classList.remove("show");
+  $("previewIframe").srcdoc = "";
+});
+
+/* Misc */
+$("brandHome").addEventListener("click", () => {
+  if(state.user){ state.currentProject = null; showPage("page-dashboard"); }
+});
+
+document.querySelectorAll(".modal-bg").forEach(bg => {
+  bg.addEventListener("click", (e) => {
+    if(e.target === bg) bg.classList.remove("show");
+  });
+});
+
+showPage("page-auth");
+</script>
+</body>
+</html>
